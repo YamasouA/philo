@@ -6,19 +6,8 @@
 #include <stdbool.h>
 #include <limits.h>
 
-typedef struct s_philo	t_philo;
-struct s_philo
-{
-	//int	id;
-	//int	left_fork;
-	//int	right_fork;
-	int	id;
-	int	eat_last;
-	pthread_t	thread;
-};
-
-
 typedef struct s_config	t_config;
+typedef struct s_philo	t_philo;
 struct s_config
 {
 	size_t	num;
@@ -30,6 +19,14 @@ struct s_config
 
 	pthread_mutex_t	*forks;
 	t_philo	*philo;
+};
+
+struct s_philo
+{
+	int	id;
+	int	eat_last;
+	pthread_t	thread;
+	t_config	*config;
 };
 
 // utils.c

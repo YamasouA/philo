@@ -5,16 +5,65 @@ void	print_stamp()
 
 }
 
+bool	eating(t_philo	*philo)
+{
+	bool	ret;
+	int		right;
+	int		left;
+
+	ret = true;
+	right = (philo->id + 1) % philo->config->num;
+	if (philo->id == 0)
+		left = philo->config->num - 1;
+	else
+		left = philo->id - 1;
+	pthread_mutex_unlock(&philo->config->forks[right]);
+	printf("\x1b[33mphilo %d put down right fork[%d]\x1b[0m\n", philo->id, right);
+	pthread_mutex_unlock(&philo->config->forks[left]);
+	printf("\x1b[33mphilo %d put down left fork[%d]\x1b[0m\n", philo->id, left);
+	return (ret);
+}
+
+bool	get_fork(t_philo *philo)
+{
+	bool	ret;
+	int		right;
+	int		left;
+
+	ret = true;
+	right = (philo->id + 1) % philo->config->num;
+	if (philo->id == 0)
+		left = philo->config->num - 1;
+	else
+		left = philo->id - 1;
+	pthread_mutex_lock(&philo->config->forks[left]);
+	printf("\x1b[34mphilo %d pick left fork[%d]\x1b[0m\n", philo->id, left);
+	pthread_mutex_lock(&philo->config->forks[right]);
+	printf("\x1b[34mphilo %d pick right fork[%d]\x1b[0m\n", philo->id, right);
+	return (ret);
+}
+
+bool	eat(t_philo *philo)
+{
+	bool	flag;
+	flag = get_fork(philo);
+	if (!flag)
+		return (flag);
+	flag = flag & eating(philo);
+	return (flag);
+}
+
 void	simulate(void *arg)
 {
-	//t_config	*config;
 	t_philo	*philo;
 
-	//config = (t_config *)arg;
 	philo = (t_philo *)arg;
-	printf("philo->id %d\n", philo->id);
-	//pthread_mutex_lock();
-	//pthread_mutex_unlock();
+	while (1)
+	{
+		eat(philo);
+		break;
+		//sleep();
+	}
 }
 
 bool	create_thread(t_config *config)
@@ -26,7 +75,9 @@ bool	create_thread(t_config *config)
 	{
 		if (pthread_create(&config->philo[n].thread, NULL, (void *)simulate, &config->philo[n]))
 			return (false);
+		printf("\x1b[32m");
 		printf("create %zu thread\n", n);
+		printf("\x1b[0m");
 		n++;
 	}
 	return (true);
@@ -41,7 +92,9 @@ bool	wait_thread(t_config *config)
 	{
 		if (pthread_join(config->philo[n].thread, NULL))
 			return (false);
+		printf("\x1b[31m");
 		printf("finish %zu thread\n", n);
+		printf("\x1b[0m");
 		n++;
 	}
 	return (true);

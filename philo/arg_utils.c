@@ -17,6 +17,7 @@ void	init_philo(t_config *config)
 	{
 		config->philo[n].eat_last = 0;
 		config->philo[n].id = n;
+		config->philo[n].config = config;
 		n++;
 	}
 }
