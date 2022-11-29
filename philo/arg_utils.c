@@ -15,9 +15,12 @@ void	init_philo(t_config *config)
 	n = 0;
 	while (n < config->num)
 	{
-		config->philo[n].eat_last = 0;
+		config->philo[n].last_eat = 0;
 		config->philo[n].id = n;
 		config->philo[n].config = config;
+		config->philo[n].total_eat = 0;
+		// mutex_initのエラー処理 ERROR
+		pthread_mutex_init(&config->philo[n].monitor, NULL);
 		n++;
 	}
 }
