@@ -26,6 +26,7 @@ struct s_philo
 	int	id;
 	long long	last_eat;
 	int	total_eat; // philo's eat total time
+	bool	is_deth;
 	pthread_t	thread;
 	pthread_mutex_t	monitor;
 	t_config	*config;

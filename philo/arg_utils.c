@@ -19,6 +19,7 @@ void	init_philo(t_config *config)
 		config->philo[n].id = n;
 		config->philo[n].config = config;
 		config->philo[n].total_eat = 0;
+		config->philo[n].is_deth = false;
 		// mutex_initのエラー処理 ERROR
 		pthread_mutex_init(&config->philo[n].monitor, NULL);
 		n++;
@@ -51,7 +52,7 @@ t_config	*init(int n, char **argv)
 	config->eat = ft_atoi(argv[3]);
 	config->sleep = ft_atoi(argv[4]);
 	if (n > 5)
-		config->end_time = ft_atoi(argv[2]);
+		config->end_time = ft_atoi(argv[5]);
 	else
 		config->end_time = -1;
 	config->philo = malloc(sizeof(t_philo) * config->num);

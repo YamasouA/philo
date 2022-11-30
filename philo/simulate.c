@@ -97,8 +97,8 @@ void	monitor(void *p)
 	philo = (t_philo *)p;
 	while (1)
 	{
-		usleep(300);
-		//printf("-----monitoring-----\n");
+		usleep(500);
+		printf("-----monitoring [%d]-----\n", philo->id);
 		pthread_mutex_lock(&philo->monitor);
 		now = get_time();
 		if (now == -1)
@@ -107,13 +107,13 @@ void	monitor(void *p)
 			printf("Error 1\n");
 			break;
 		}
-		//printf("eat span %lld\n", now - philo->last_eat);
 		if (now - philo->last_eat > philo->config->die) // 餓死
 		{
+			philo->is_deth = true;
 			printf("philo %d Error 2\n", philo->id);
 			break;
 		}
-		if (philo->total_eat != -1 && philo->total_eat > philo->config->end_time) // 満腹
+		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
 		{
 			printf("Error 3\n");
 			break;
@@ -153,6 +153,8 @@ void	simulate(void *arg)
 		eat(philo);
 		_sleep(philo->config->sleep);
 		printf("\x1b[35mphilo %d sleep %d milisec\x1b[0m\n", philo->id, philo->config->sleep);
+		if (philo->is_deth)
+			break;
 		//_think(philo->config->think);
 		//break;
 	}
