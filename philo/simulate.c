@@ -232,12 +232,20 @@ bool	wait_thread(t_config *config)
 	return (true);
 }
 
+bool	philo_one(t_config *config)
+{
+	print_stamp(&config->philo[0], FORK);
+	_sleep(config->die);
+	print_stamp(&config->philo[0], DIE);
+	return (true);
+}
+
 bool	start_simulation(t_config *config)
 {
 	bool	ret;
 
 	if (config->num == 1)
-		return (philo_one(t_config *config));
+		return (philo_one(config));
 	ret = create_thread(config);
 	if (!ret)
 		return (false);
