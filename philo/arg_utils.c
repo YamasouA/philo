@@ -47,10 +47,16 @@ t_config	*init(int n, char **argv)
 	config = malloc(sizeof(t_config) * 1);
 	if (config == NULL)
 		return (NULL);
+	config->is_die = false;
 	config->num = ft_atoi(argv[1]);
 	config->die = ft_atoi(argv[2]);
 	config->eat = ft_atoi(argv[3]);
 	config->sleep = ft_atoi(argv[4]);
+	config->start = get_time();
+	if (config->start == -1)
+	{
+		//ERROR
+	}
 	if (n > 5)
 		config->end_time = ft_atoi(argv[5]);
 	else
