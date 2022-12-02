@@ -48,6 +48,7 @@ t_config	*init(int n, char **argv)
 	if (config == NULL)
 		return (NULL);
 	config->is_die = false;
+	pthread_mutex_init(&config->monitor, NULL);
 	config->num = ft_atoi(argv[1]);
 	config->die = ft_atoi(argv[2]);
 	config->eat = ft_atoi(argv[3]);

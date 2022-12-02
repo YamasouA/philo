@@ -1,51 +1,47 @@
 #include "philo.h"
 
-long long	timestamp(void)
+long long	get_time()
 {
-	//struct timeval	t;
-	//gettimeofday(&t, NULL);
-	//return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
-	return (1);
+	struct timeval	tv;
+	long long	time;
+
+	time = gettimeofday(&tv, NULL);
+	if (time == -1)
+		return (time);
+	time = tv.tv_sec * 1000;
+	time += tv.tv_usec / 1000;
+	return (time);
 }
 
-static	int	space(const char *str)
+void	print_stamp(t_philo *philo, int type)
 {
-	if (*str == ' ' || *str == '\f' || *str == '\n'
-		|| *str == '\r' || *str == '\t' || *str == '\v')
-		return (1);
-	else
-		return (0);
-}
+	long long	now;
+	long long	diff;
 
-static	bool	is_overflow(const char str, long long i, int sign)
-{
-	if (sign > 0 && (LLONG_MAX - sign * (str - '0')) / 10 >= i)
-		return (true);
-	else if (sign < 0 && (LLONG_MIN - sign * (str - '0')) / 10 <= i)
-		return (true);
-	return (false);
-}
-
-int	ft_atoi(const char *str)
-{
-	long	i;
-	int		sign;
-
-	i = 0;
-	sign = 1;
-	while (space(str))
-		str++;
-	if (*str == '-' || *str == '+')
-		sign = 44 - *str++;
-	while (*str >= '0' && *str <= '9')
+	pthread_mutex_lock(&philo->config->monitor);
+	now = get_time();
+	if (now == -1)
 	{
-		if (is_overflow(*str, i, sign))
-			i = sign * (*str - '0') + i * 10;
-		else if (sign == 1)
-			return ((int)LONG_MAX);
-		else
-			return ((int)LONG_MIN);
-		str++;
+		// ERROR
 	}
-	return ((int)i);
+	// pthread_mutex_lock(&philo->monitor);
+	diff = now - philo->config->start;
+	if (!philo->config->is_die)
+	{
+		if (type == FORK)
+			printf("%lld %d has taken a fork\n", diff, philo->id + 1);
+		else if (type == EAT)
+			printf("%lld %d is eating\n", diff, philo->id + 1);
+		else if (type == SLEEP)
+			printf("%lld %d is sleeping\n", diff, philo->id + 1);
+		else if (type == THINK)
+			printf("%lld %d is thinking\n", diff, philo->id + 1);
+		else if (type == DIE)
+		{
+			philo->config->is_die = true;
+			printf("%lld %d died\n", diff, philo->id + 1);
+		}
+	}
+	pthread_mutex_unlock(&philo->config->monitor);
+	// pthread_mutex_unlock(&philo->monitor);
 }

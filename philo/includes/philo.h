@@ -6,11 +6,12 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <sys/time.h>
-#define EAT	0
-#define FORK 1
-#define SLEEP 2
-#define THINK 3
-#define DIE	4
+#define EAT	1
+#define FORK 2
+#define SLEEP 3
+#define THINK 4
+#define DIE	5
+#define FULL 6
 
 typedef struct s_config	t_config;
 typedef struct s_philo	t_philo;
@@ -41,7 +42,7 @@ struct s_philo
 	t_config	*config;
 };
 
-// utils.c
+// atoi.c
 int	ft_atoi(const char *str);
 
 // arg_utils.c
@@ -51,3 +52,11 @@ bool	argcheck(int n);
 // simulate.c
 bool	start_simulation(t_config *config);
 long long	get_time();
+
+// utils.c
+long long	get_time();
+void	print_stamp(t_philo *philo, int type);
+
+// action.c
+bool	eat(t_philo *philo);
+void	_sleep(long long wait_time);

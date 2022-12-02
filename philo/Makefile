@@ -3,6 +3,8 @@ NAME = philo
 SRCS = main.c \
 	simulate.c \
 	utils.c \
+	atoi.c \
+	action.c \
 	arg_utils.c
 OBJS = $(SRCS:.c=.o)
 INCLUDE = -I includes

@@ -1,131 +1,15 @@
 #include "philo.h"
 
-long long	get_time()
-{
-	struct timeval	tv;
-	long long	time;
-
-	time = gettimeofday(&tv, NULL);
-	if (time == -1)
-		return (time);
-	time = tv.tv_sec * 1000;
-	time += tv.tv_usec / 1000;
-	return (time);
-}
-
-void	print_stamp(t_philo *philo, int type)
-{
-	long long	now;
-	long long	diff;
-
-	now = get_time();
-	if (now == -1)
-		// ERROR
-	pthread_mutex_lock(&philo->monitor);
-	diff = now - philo->config->start;
-	if (!philo->config->is_die)
-	{
-		if (type == FORK)
-			printf("%lld %d has taken a fork\n", diff, philo->id + 1);
-		else if (type == EAT)
-			printf("%lld %d is eating\n", diff, philo->id + 1);
-		else if (type == SLEEP)
-			printf("%lld %d is sleeping\n", diff, philo->id + 1);
-		else if (type == THINK)
-			printf("%lld %d is thinking\n", diff, philo->id + 1);
-		else if (type == DIE)
-		{
-			philo->config->is_die = true;
-			printf("%lld %d died\n", diff, philo->id + 1);
-		}
-	}
-	pthread_mutex_unlock(&philo->monitor);
-}
-
-void	_sleep(long long wait_time)
-{
-	long long	end;
-	long long	now;
-
-	end = get_time();
-	if (end == -1)
-		// ERROR
-		return;
-	end += wait_time;
-	//printf("diff: %lld\n", wait_time);
-	while (1)
-	{
-		now = get_time();
-		if (now == -1)
-			// ERROR
-			return ;
-		if (now >= end)
-			break;
-		usleep(1000);
-	}
-}
-
-bool	eating(t_philo	*philo)
-{
-	bool	ret;
-	int		right;
-	int		left;
-
-	ret = true;
-	left = philo->id;
-	right = (philo->id + philo->config->num - 1) % philo->config->num;
-	_sleep(philo->config->eat);
-	pthread_mutex_lock(&philo->monitor);
-	print_stamp(philo, EAT);
-	philo->total_eat += philo->config->eat;
-	//printf("\x1b[31mphilo %d total_eat %d\x1b[0m\n", philo->id, philo->total_eat);
-	if (philo->config->end_time != -1 && philo->total_eat > philo->config->end_time)
-	{
-		printf("\x1b[31mphilo %d over total_eat\x1b[0m\n", philo->id);
-	}
-	philo->last_eat = get_time();
-	if (philo->last_eat == -1)
-	{
-		// ERROR
-	}
-	pthread_mutex_unlock(&philo->monitor);
-	pthread_mutex_unlock(&philo->config->forks[right]);
-	pthread_mutex_unlock(&philo->config->forks[left]);
-	//printf("\x1b[33mphilo %d put down right fork[%d]\x1b[0m\n", philo->id, right);
-	//printf("\x1b[33mphilo %d put down left fork[%d]\x1b[0m\n", philo->id, left);
-	return (ret);
-}
-
-bool	get_fork(t_philo *philo)
-{
-	bool	ret;
-	int		right;
-	int		left;
-
-	ret = true;
-	left = philo->id;
-	right = (philo->id + philo->config->num - 1) % philo->config->num;
-	//printf("left: %d\n", left);
-	//printf("right: %d\n", right);
-	pthread_mutex_lock(&philo->config->forks[left]);
-	print_stamp(philo, FORK);
-	pthread_mutex_lock(&philo->config->forks[right]);
-	print_stamp(philo, FORK);
-	//printf("\x1b[34mphilo %d pick right fork[%d]\x1b[0m\n", philo->id, right);
-	//printf("\x1b[34mphilo %d pick left fork[%d]\x1b[0m\n", philo->id, left);
-	return (ret);
-}
-
 void	monitor(void *p)
 {
 	t_philo	*philo;
 	long long	now;
+	int		flag;
 
 	philo = (t_philo *)p;
+	flag = 0;
 	while (1)
 	{
-		if (philo->config->is_die)
-			break;
 		usleep(500);
 		//printf("-----monitoring [%d]-----\n", philo->id);
 		now = get_time();
@@ -136,31 +20,35 @@ void	monitor(void *p)
 			break;
 		}
 		pthread_mutex_lock(&philo->monitor);
+		pthread_mutex_lock(&philo->config->monitor);
+		if (philo->config->is_die)
+		{
+			pthread_mutex_unlock(&philo->config->monitor);
+			pthread_mutex_unlock(&philo->monitor);
+			break;
+		}
 		if (now - philo->last_eat > philo->config->die) // 餓死
 		{
 			philo->is_deth = true;
-			print_stamp(philo, DIE);
+			flag = DIE;
+			// print_stamp(philo, DIE);
 			//printf("philo %d Error 2\n", philo->id);
-			break;
+			// break;
 		}
 		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
 		{
-			printf("Error 3\n");
+			// printf("Error 3\n");
+			flag = FULL;
+			// break;
+		}
+		pthread_mutex_unlock(&philo->config->monitor);
+		pthread_mutex_unlock(&philo->monitor);
+		if (flag != 0)
+		{
+			print_stamp(philo, flag);
 			break;
 		}
-		pthread_mutex_unlock(&philo->monitor);
 	}
-	pthread_mutex_unlock(&philo->monitor);
-}
-
-bool	eat(t_philo *philo)
-{
-	bool	flag;
-	flag = get_fork(philo);
-	if (!flag)
-		return (flag);
-	flag = flag & eating(philo);
-	return (flag);
 }
 
 void	simulate(void *arg)
@@ -185,11 +73,21 @@ void	simulate(void *arg)
 	while (1)
 	{
 		eat(philo);
+		pthread_mutex_lock(&philo->config->monitor);
 		if (philo->config->is_die)
+		{
+			pthread_mutex_unlock(&philo->config->monitor);
 			break;
+		}
+		pthread_mutex_unlock(&philo->config->monitor);
 		_sleep(philo->config->sleep);
+		pthread_mutex_lock(&philo->config->monitor);
 		if (philo->config->is_die)
+		{
+			pthread_mutex_unlock(&philo->config->monitor);
 			break;
+		}
+		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, SLEEP);
 		print_stamp(philo, THINK);
 		//printf("\x1b[35mphilo %d sleep %d milisec\x1b[0m\n", philo->id, philo->config->sleep);
