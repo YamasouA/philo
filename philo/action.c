@@ -32,16 +32,23 @@ bool	eating(t_philo	*philo)
 	ret = true;
 	left = philo->id;
 	right = (philo->id + philo->config->num - 1) % philo->config->num;
+	pthread_mutex_lock(&philo->config->monitor);
+	if (philo->config->is_die)
+	{
+		pthread_mutex_unlock(&philo->config->monitor);
+		return (ret);
+	}
+	pthread_mutex_unlock(&philo->config->monitor);
 	_sleep(philo->config->eat);
 	print_stamp(philo, EAT);
 	pthread_mutex_lock(&philo->monitor);
 	// pthread_mutex_lock(&philo->config->monitor);
 	philo->total_eat += philo->config->eat;
 	//printf("\x1b[31mphilo %d total_eat %d\x1b[0m\n", philo->id, philo->total_eat);
-	if (philo->config->end_time != -1 && philo->total_eat > philo->config->end_time)
-	{
-		printf("\x1b[31mphilo %d over total_eat\x1b[0m\n", philo->id);
-	}
+	// if (philo->config->end_time != -1 && philo->total_eat > philo->config->end_time)
+	// {
+	// 	printf("\x1b[31mphilo %d over total_eat\x1b[0m\n", philo->id);
+	// }
 	philo->last_eat = get_time();
 	if (philo->last_eat == -1)
 	{

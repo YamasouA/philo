@@ -41,6 +41,11 @@ void	print_stamp(t_philo *philo, int type)
 			philo->config->is_die = true;
 			printf("%lld %d died\n", diff, philo->id + 1);
 		}
+		else if (type == FULL)
+		{
+			philo->config->is_die = true;
+			// printf("%lld %d ", diff, philo->id + 1);
+		}
 	}
 	pthread_mutex_unlock(&philo->config->monitor);
 	// pthread_mutex_unlock(&philo->monitor);
