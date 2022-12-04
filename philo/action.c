@@ -19,6 +19,7 @@ void	_sleep(long long wait_time)
 		if (now >= end)
 			break;
 		usleep(1000);
+		// usleep(100);
 	}
 }
 

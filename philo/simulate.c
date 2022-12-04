@@ -10,7 +10,8 @@ void	monitor(void *p)
 	flag = 0;
 	while (1)
 	{
-		usleep(500);
+		usleep(300);
+		// usleep(500);
 		pthread_mutex_lock(&philo->config->monitor);
 		if (philo->config->is_die)
 		{
@@ -40,13 +41,8 @@ void	monitor(void *p)
 		{
 			philo->is_deth = true;
 			flag = DIE;
-			// print_stamp(philo, DIE);
-			//printf("philo %d Error 2\n", philo->id);
-			// break;
 		}
 		pthread_mutex_unlock(&philo->monitor);
-		// pthread_mutex_unlock(&philo->config->monitor);
-		// pthread_mutex_unlock(&philo->monitor);
 		if (flag != 0)
 		{
 			print_stamp(philo, flag);
@@ -125,7 +121,6 @@ bool	wait_thread(t_config *config)
 	{
 		if (pthread_join(config->philo[n].thread, NULL))
 			return (false);
-		// printf("end\n");
 		n++;
 	}
 	return (true);
