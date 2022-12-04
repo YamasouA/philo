@@ -18,7 +18,14 @@ void	monitor(void *p)
 			break;
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
-		
+
+		pthread_mutex_lock(&philo->monitor_die);
+		if (philo->is_deth)
+		{
+			pthread_mutex_unlock(&philo->config->monitor);
+			break;
+		}
+		pthread_mutex_unlock(&philo->monitor_die);
 		// pthread_mutex_lock(&philo->monitor);
 		pthread_mutex_lock(&philo->monitor_total);
 		now = get_time();
@@ -32,12 +39,12 @@ void	monitor(void *p)
 		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
 		{
 			flag = FULL;
-			// pthread_mutex_lock(&philo->monitor_die);
-			// philo->is_deth = true;
-			pthread_mutex_lock(&philo->config->monitor);
-			philo->config->is_die = true;
-			pthread_mutex_unlock(&philo->config->monitor);
-			// pthread_mutex_unlock(&philo->monitor_die);
+			pthread_mutex_lock(&philo->monitor_die);
+			philo->is_deth = true;
+			pthread_mutex_unlock(&philo->monitor_die);
+			// pthread_mutex_lock(&philo->config->monitor);
+			// philo->config->is_die = true;
+			// pthread_mutex_unlock(&philo->config->monitor);
 			pthread_mutex_unlock(&philo->monitor_total);
 			// pthread_mutex_unlock(&philo->monitor);
 			break;
@@ -82,24 +89,28 @@ void	simulate(void *arg)
 	{
 		eat(philo);
 		pthread_mutex_lock(&philo->config->monitor);
+		pthread_mutex_lock(&philo->monitor_die);
 		// printf("hoga1\n");
-		if (philo->config->is_die)
+		if (philo->config->is_die || philo->is_deth)
 		{
 			// printf("hoga2\n");
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
 		// printf("hoga\n");
+		pthread_mutex_unlock(&philo->monitor_die);
 		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, SLEEP);
 		_sleep(philo->config->sleep);
 		pthread_mutex_lock(&philo->config->monitor);
 		// pthread_mutex_lock(&philo->monitor);
+		pthread_mutex_lock(&philo->monitor_die);
 		if (philo->config->is_die)
 		{
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
+		pthread_mutex_unlock(&philo->monitor_die);
 		// pthread_mutex_unlock(&philo->monitor);
 		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, THINK);
