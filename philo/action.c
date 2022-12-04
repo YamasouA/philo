@@ -43,14 +43,19 @@ bool	eating(t_philo	*philo)
 	pthread_mutex_unlock(&philo->config->monitor);
 	_sleep(philo->config->eat);
 	print_stamp(philo, EAT);
-	pthread_mutex_lock(&philo->monitor);
+	// pthread_mutex_lock(&philo->monitor);
+	pthread_mutex_lock(&philo->monitor_total);
 	philo->total_eat += philo->config->eat;
+	pthread_mutex_unlock(&philo->monitor_total);
+	// pthread_mutex_unlock(&philo->monitor);
+	pthread_mutex_lock(&philo->monitor_last);
 	philo->last_eat = get_time();
+	pthread_mutex_unlock(&philo->monitor_last);
+	// pthread_mutex_unlock(&philo->monitor);
 	if (philo->last_eat == -1)
 	{
 		// ERROR
 	}
-	pthread_mutex_unlock(&philo->monitor);
 	pthread_mutex_unlock(&philo->config->forks[right]);
 	pthread_mutex_unlock(&philo->config->forks[left]);
 	// printf("koko\n");

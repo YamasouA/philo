@@ -11,7 +11,6 @@ void	monitor(void *p)
 	while (1)
 	{
 		usleep(300);
-		// usleep(500);
 		pthread_mutex_lock(&philo->config->monitor);
 		if (philo->config->is_die)
 		{
@@ -20,7 +19,8 @@ void	monitor(void *p)
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
 		
-		pthread_mutex_lock(&philo->monitor);
+		// pthread_mutex_lock(&philo->monitor);
+		pthread_mutex_lock(&philo->monitor_total);
 		now = get_time();
 		if (now == -1)
 		{
@@ -31,18 +31,23 @@ void	monitor(void *p)
 		// printf("philo->total_eat: %d", philo->total_eat);
 		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
 		{
-			// printf("Error 3\n");
 			flag = FULL;
+			pthread_mutex_lock(&philo->monitor_die);
 			philo->is_deth = true;
-			pthread_mutex_unlock(&philo->monitor);
+			pthread_mutex_unlock(&philo->monitor_die);
+			pthread_mutex_unlock(&philo->monitor_total);
+			// pthread_mutex_unlock(&philo->monitor);
 			break;
 		}
-		else if (now - philo->last_eat > philo->config->die) // 餓死
+		pthread_mutex_unlock(&philo->monitor_total);
+		pthread_mutex_lock(&philo->monitor_last);
+		if (now - philo->last_eat > philo->config->die) // 餓死
 		{
 			philo->is_deth = true;
 			flag = DIE;
 		}
-		pthread_mutex_unlock(&philo->monitor);
+		pthread_mutex_unlock(&philo->monitor_last);
+		// pthread_mutex_unlock(&philo->monitor);
 		if (flag != 0)
 		{
 			print_stamp(philo, flag);
@@ -57,13 +62,15 @@ void	simulate(void *arg)
 	pthread_t	th_monitor;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(&philo->monitor);
+	// pthread_mutex_lock(&philo->monitor);
+	pthread_mutex_lock(&philo->monitor_last);
 	philo->last_eat = get_time();
 	if (philo->last_eat == -1)
 	{
 		// ERROR
 	}
-	pthread_mutex_unlock(&philo->monitor);
+	// pthread_mutex_unlock(&philo->monitor);
+	pthread_mutex_unlock(&philo->monitor_last);
 	pthread_create(&th_monitor, NULL, (void *)monitor, philo);
 	pthread_detach(th_monitor);
 	if (philo->id % 2 != 0)

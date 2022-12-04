@@ -25,7 +25,9 @@ struct s_config
 	long long	start;
 
 	bool is_die;
+	bool	err;
 	pthread_mutex_t	monitor;
+	pthread_mutex_t	print;
 
 	pthread_mutex_t	*forks;
 	t_philo	*philo;
@@ -38,7 +40,9 @@ struct s_philo
 	int	total_eat; // philo's eat total time
 	bool	is_deth;
 	pthread_t	thread;
-	pthread_mutex_t	monitor;
+	pthread_mutex_t	monitor_last;
+	pthread_mutex_t	monitor_total;
+	pthread_mutex_t	monitor_die;
 	t_config	*config;
 };
 

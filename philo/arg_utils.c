@@ -21,7 +21,9 @@ void	init_philo(t_config *config)
 		config->philo[n].total_eat = 0;
 		config->philo[n].is_deth = false;
 		// mutex_initのエラー処理 ERROR
-		pthread_mutex_init(&config->philo[n].monitor, NULL);
+		pthread_mutex_init(&config->philo[n].monitor_die, NULL);
+		pthread_mutex_init(&config->philo[n].monitor_last, NULL);
+		pthread_mutex_init(&config->philo[n].monitor_total, NULL);
 		n++;
 	}
 }
@@ -49,6 +51,7 @@ t_config	*init(int n, char **argv)
 		return (NULL);
 	config->is_die = false;
 	pthread_mutex_init(&config->monitor, NULL);
+	pthread_mutex_init(&config->print, NULL);
 	config->num = ft_atoi(argv[1]);
 	config->die = ft_atoi(argv[2]);
 	config->eat = ft_atoi(argv[3]);

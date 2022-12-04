@@ -18,7 +18,8 @@ void	print_stamp(t_philo *philo, int type)
 	long long	now;
 	long long	diff;
 
-	pthread_mutex_lock(&philo->config->monitor);
+	// pthread_mutex_lock(&philo->config->monitor);
+	pthread_mutex_lock(&philo->config->print);
 	now = get_time();
 	if (now == -1)
 	{
@@ -38,15 +39,20 @@ void	print_stamp(t_philo *philo, int type)
 			printf("%lld %d is thinking\n", diff, philo->id + 1);
 		else if (type == DIE)
 		{
+			pthread_mutex_lock(&philo->config->monitor);
 			philo->config->is_die = true;
+			pthread_mutex_unlock(&philo->config->monitor);
 			printf("%lld %d died\n", diff, philo->id + 1);
 		}
 		else if (type == FULL)
 		{
+			pthread_mutex_lock(&philo->config->monitor);
 			philo->config->is_die = true;
+			pthread_mutex_unlock(&philo->config->monitor);
 			// printf("%lld %d ", diff, philo->id + 1);
 		}
 	}
-	pthread_mutex_unlock(&philo->config->monitor);
+	pthread_mutex_unlock(&philo->config->print);
+	// pthread_mutex_unlock(&philo->config->monitor);
 	// pthread_mutex_unlock(&philo->monitor);
 }
