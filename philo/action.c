@@ -19,7 +19,6 @@ void	_sleep(long long wait_time)
 		if (now >= end)
 			break;
 		usleep(1000);
-		// usleep(100);
 	}
 }
 
@@ -41,8 +40,8 @@ bool	eating(t_philo	*philo)
 		return (ret);
 	}
 	pthread_mutex_unlock(&philo->config->monitor);
-	_sleep(philo->config->eat);
 	print_stamp(philo, EAT);
+	_sleep(philo->config->eat);
 	// pthread_mutex_lock(&philo->monitor);
 	pthread_mutex_lock(&philo->monitor_total);
 	philo->total_eat += philo->config->eat;

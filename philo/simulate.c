@@ -88,6 +88,7 @@ void	simulate(void *arg)
 		}
 		// printf("hoga\n");
 		pthread_mutex_unlock(&philo->config->monitor);
+		print_stamp(philo, SLEEP);
 		_sleep(philo->config->sleep);
 		pthread_mutex_lock(&philo->config->monitor);
 		// pthread_mutex_lock(&philo->monitor);
@@ -98,7 +99,6 @@ void	simulate(void *arg)
 		}
 		// pthread_mutex_unlock(&philo->monitor);
 		pthread_mutex_unlock(&philo->config->monitor);
-		print_stamp(philo, SLEEP);
 		print_stamp(philo, THINK);
 	}
 }
