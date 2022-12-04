@@ -92,7 +92,7 @@ void	simulate(void *arg)
 	{
 		eat(philo);
 		cnt++;
-		if (cnt >= philo->config->end_time)
+		if (philo->config->end_time != -1 && cnt >= philo->config->end_time)
 			break;
 		pthread_mutex_lock(&philo->config->monitor);
 		// printf("hoga1\n");
