@@ -32,9 +32,12 @@ void	monitor(void *p)
 		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
 		{
 			flag = FULL;
-			pthread_mutex_lock(&philo->monitor_die);
-			philo->is_deth = true;
-			pthread_mutex_unlock(&philo->monitor_die);
+			// pthread_mutex_lock(&philo->monitor_die);
+			// philo->is_deth = true;
+			pthread_mutex_lock(&philo->config->monitor);
+			philo->config->is_die = true;
+			pthread_mutex_unlock(&philo->config->monitor);
+			// pthread_mutex_unlock(&philo->monitor_die);
 			pthread_mutex_unlock(&philo->monitor_total);
 			// pthread_mutex_unlock(&philo->monitor);
 			break;
