@@ -11,20 +11,20 @@ void	monitor(void *p)
 	while (1)
 	{
 		usleep(500);
-		//printf("-----monitoring [%d]-----\n", philo->id);
+		pthread_mutex_lock(&philo->config->monitor);
+		if (philo->config->is_die)
+		{
+			pthread_mutex_unlock(&philo->config->monitor);
+			break;
+		}
+		pthread_mutex_unlock(&philo->config->monitor);
+		
+		pthread_mutex_lock(&philo->monitor);
 		now = get_time();
 		if (now == -1)
 		{
 			// ERROR
 			printf("Error 1\n");
-			break;
-		}
-		pthread_mutex_lock(&philo->monitor);
-		pthread_mutex_lock(&philo->config->monitor);
-		if (philo->config->is_die)
-		{
-			pthread_mutex_unlock(&philo->config->monitor);
-			pthread_mutex_unlock(&philo->monitor);
 			break;
 		}
 		// printf("philo->total_eat: %d", philo->total_eat);
@@ -33,7 +33,6 @@ void	monitor(void *p)
 			// printf("Error 3\n");
 			flag = FULL;
 			philo->is_deth = true;
-			pthread_mutex_unlock(&philo->config->monitor);
 			pthread_mutex_unlock(&philo->monitor);
 			break;
 		}
@@ -45,9 +44,9 @@ void	monitor(void *p)
 			//printf("philo %d Error 2\n", philo->id);
 			// break;
 		}
-		
-		pthread_mutex_unlock(&philo->config->monitor);
 		pthread_mutex_unlock(&philo->monitor);
+		// pthread_mutex_unlock(&philo->config->monitor);
+		// pthread_mutex_unlock(&philo->monitor);
 		if (flag != 0)
 		{
 			print_stamp(philo, flag);
@@ -70,8 +69,6 @@ void	simulate(void *arg)
 	}
 	pthread_mutex_unlock(&philo->monitor);
 	pthread_create(&th_monitor, NULL, (void *)monitor, philo);
-	{
-	}
 	pthread_detach(th_monitor);
 	if (philo->id % 2 != 0)
 		usleep(500);
@@ -79,28 +76,27 @@ void	simulate(void *arg)
 	{
 		eat(philo);
 		pthread_mutex_lock(&philo->config->monitor);
-		printf("hoge\n");
-		if (philo->config->is_die || philo->is_deth)
+		// printf("hoga1\n");
+		if (philo->config->is_die)
 		{
-			printf("goga\n");
+			// printf("hoga2\n");
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
+		// printf("hoga\n");
 		pthread_mutex_unlock(&philo->config->monitor);
 		_sleep(philo->config->sleep);
 		pthread_mutex_lock(&philo->config->monitor);
-		if (philo->config->is_die || philo->is_deth)
+		// pthread_mutex_lock(&philo->monitor);
+		if (philo->config->is_die)
 		{
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
-		printf("foge\n");
+		// pthread_mutex_unlock(&philo->monitor);
 		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, SLEEP);
 		print_stamp(philo, THINK);
-		//printf("\x1b[35mphilo %d sleep %d milisec\x1b[0m\n", philo->id, philo->config->sleep);
-		//_think(philo->config->think);
-		//break;
 	}
 }
 
@@ -112,10 +108,9 @@ bool	create_thread(t_config *config)
 	while (n < config->num)
 	{
 		if (pthread_create(&config->philo[n].thread, NULL, (void *)simulate, &config->philo[n]))
+		{
 			return (false);
-		//printf("\x1b[32m");
-		//printf("create %zu thread\n", n);
-		//printf("\x1b[0m");
+		}
 		n++;
 	}
 	return (true);
@@ -130,9 +125,7 @@ bool	wait_thread(t_config *config)
 	{
 		if (pthread_join(config->philo[n].thread, NULL))
 			return (false);
-		//printf("\x1b[31m");
-		//printf("finish %zu thread\n", n);
-		//printf("\x1b[0m");
+		// printf("end\n");
 		n++;
 	}
 	return (true);
