@@ -18,12 +18,12 @@ void	init_philo(t_config *config)
 		config->philo[n].last_eat = 0;
 		config->philo[n].id = n;
 		config->philo[n].config = config;
-		config->philo[n].total_eat = 0;
+		// config->philo[n].total_eat = 0;
 		config->philo[n].is_deth = false;
 		// mutex_initのエラー処理 ERROR
 		pthread_mutex_init(&config->philo[n].monitor_die, NULL);
 		pthread_mutex_init(&config->philo[n].monitor_last, NULL);
-		pthread_mutex_init(&config->philo[n].monitor_total, NULL);
+		// pthread_mutex_init(&config->philo[n].monitor_total, NULL);
 		n++;
 	}
 }

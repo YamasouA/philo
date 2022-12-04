@@ -3,3 +3,4 @@
 philo
 .devcontainer
 test.sh
+*.txt

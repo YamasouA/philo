@@ -18,16 +18,32 @@ void	monitor(void *p)
 			break;
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
-
-		pthread_mutex_lock(&philo->monitor_die);
-		if (philo->is_deth)
-		{
-			pthread_mutex_unlock(&philo->config->monitor);
-			break;
-		}
-		pthread_mutex_unlock(&philo->monitor_die);
+		
 		// pthread_mutex_lock(&philo->monitor);
-		pthread_mutex_lock(&philo->monitor_total);
+		// pthread_mutex_lock(&philo->monitor_total);
+		// now = get_time();
+		// if (now == -1)
+		// {
+		// 	// ERROR
+		// 	printf("Error 1\n");
+		// 	break;
+		// }
+		// printf("philo->total_eat: %d", philo->total_eat);
+		// if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
+		// {
+		// 	flag = FULL;
+		// 	pthread_mutex_lock(&philo->monitor_die);
+		// 	philo->is_deth = true;
+		// 	// pthread_mutex_lock(&philo->config->monitor);
+		// 	// philo->config->is_die = true;
+		// 	// pthread_mutex_unlock(&philo->config->monitor);
+		// 	pthread_mutex_unlock(&philo->monitor_die);
+		// 	pthread_mutex_unlock(&philo->monitor_total);
+		// 	// pthread_mutex_unlock(&philo->monitor);
+		// 	break;
+		// }
+		// pthread_mutex_unlock(&philo->monitor_total);
+		pthread_mutex_lock(&philo->monitor_last);
 		now = get_time();
 		if (now == -1)
 		{
@@ -35,22 +51,6 @@ void	monitor(void *p)
 			printf("Error 1\n");
 			break;
 		}
-		// printf("philo->total_eat: %d", philo->total_eat);
-		if (philo->config->end_time!= -1 && (philo->total_eat > philo->config->end_time)) // 満腹
-		{
-			flag = FULL;
-			pthread_mutex_lock(&philo->monitor_die);
-			philo->is_deth = true;
-			pthread_mutex_unlock(&philo->monitor_die);
-			// pthread_mutex_lock(&philo->config->monitor);
-			// philo->config->is_die = true;
-			// pthread_mutex_unlock(&philo->config->monitor);
-			pthread_mutex_unlock(&philo->monitor_total);
-			// pthread_mutex_unlock(&philo->monitor);
-			break;
-		}
-		pthread_mutex_unlock(&philo->monitor_total);
-		pthread_mutex_lock(&philo->monitor_last);
 		if (now - philo->last_eat > philo->config->die) // 餓死
 		{
 			philo->is_deth = true;
@@ -70,6 +70,9 @@ void	simulate(void *arg)
 {
 	t_philo	*philo;
 	pthread_t	th_monitor;
+	int	cnt;
+
+	cnt = 0;
 
 	philo = (t_philo *)arg;
 	// pthread_mutex_lock(&philo->monitor);
@@ -88,29 +91,28 @@ void	simulate(void *arg)
 	while (1)
 	{
 		eat(philo);
+		cnt++;
+		if (cnt >= philo->config->end_time)
+			break;
 		pthread_mutex_lock(&philo->config->monitor);
-		pthread_mutex_lock(&philo->monitor_die);
 		// printf("hoga1\n");
-		if (philo->config->is_die || philo->is_deth)
+		if (philo->config->is_die)
 		{
 			// printf("hoga2\n");
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
 		// printf("hoga\n");
-		pthread_mutex_unlock(&philo->monitor_die);
 		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, SLEEP);
 		_sleep(philo->config->sleep);
 		pthread_mutex_lock(&philo->config->monitor);
 		// pthread_mutex_lock(&philo->monitor);
-		pthread_mutex_lock(&philo->monitor_die);
 		if (philo->config->is_die)
 		{
 			pthread_mutex_unlock(&philo->config->monitor);
 			break;
 		}
-		pthread_mutex_unlock(&philo->monitor_die);
 		// pthread_mutex_unlock(&philo->monitor);
 		pthread_mutex_unlock(&philo->config->monitor);
 		print_stamp(philo, THINK);

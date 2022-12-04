@@ -46,9 +46,9 @@ bool	eating(t_philo	*philo)
 	pthread_mutex_unlock(&philo->monitor_last);
 	_sleep(philo->config->eat);
 	// pthread_mutex_lock(&philo->monitor);
-	pthread_mutex_lock(&philo->monitor_total);
-	philo->total_eat += philo->config->eat;
-	pthread_mutex_unlock(&philo->monitor_total);
+	// pthread_mutex_lock(&philo->monitor_total);
+	// philo->total_eat += philo->config->eat;
+	// pthread_mutex_unlock(&philo->monitor_total);
 	// pthread_mutex_unlock(&philo->monitor);
 	// pthread_mutex_unlock(&philo->monitor);
 	if (philo->last_eat == -1)
