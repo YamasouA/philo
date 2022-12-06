@@ -2,5 +2,5 @@
 *.o
 philo
 .devcontainer
-test.sh
+*.sh
 *.txt

@@ -10,28 +10,44 @@ void	init_philo(t_config *config)
 		config->philo[n].last_eat = 0;
 		config->philo[n].id = n;
 		config->philo[n].config = config;
-		// config->philo[n].total_eat = 0;
 		config->philo[n].is_deth = false;
-		// mutex_initのエラー処理 ERROR
 		pthread_mutex_init(&config->philo[n].monitor_die, NULL);
 		pthread_mutex_init(&config->philo[n].monitor_last, NULL);
-		// pthread_mutex_init(&config->philo[n].monitor_total, NULL);
 		n++;
 	}
 }
 
-bool	init_pthread(t_config *config)
+void	init_pthread(t_config *config)
 {
 	size_t	n;
 
 	n = 0;
 	while (n < config->num)
 	{
-		if (pthread_mutex_init(&config->forks[n], NULL) == -1)
-			return (false);
+		pthread_mutex_init(&config->forks[n], NULL);
 		n++;
 	}
-	return (true);
+}
+
+void	init_philo_and_fork(t_config *config)
+{
+	config->philo = malloc(sizeof(t_philo) * config->num);
+	if (!config->philo)
+	{
+		free(config);
+		config = NULL;
+		return ;
+	}
+	config->forks = malloc(sizeof(pthread_mutex_t) * config->num);
+	if (!config->forks)
+	{
+		free(config->philo);
+		free(config);
+		config = NULL;
+		return ;
+	}
+	init_philo(config);
+	init_pthread(config);
 }
 
 t_config	*init(int n, char **argv)
@@ -51,32 +67,13 @@ t_config	*init(int n, char **argv)
 	config->start = get_time();
 	if (config->start == -1)
 	{
-		//ERROR
+		free(config);
+		return (NULL);
 	}
-	if (n > 5)
+	if (n == 5)
 		config->end_time = ft_atoi(argv[5]);
 	else
 		config->end_time = -1;
-	config->philo = malloc(sizeof(t_philo) * config->num);
-	if (!config->philo)
-	{
-		free(config);
-		return (NULL);
-	}
-	config->forks = malloc(sizeof(pthread_mutex_t) * config->num);
-	if (!config->forks)
-	{
-		free(config->philo);
-		free(config);
-		return (NULL);
-	}
-	init_philo(config);
-	if (!init_pthread(config))
-	{
-		free(config->philo);
-		free(config->forks);
-		free(config);
-		return (NULL);
-	}
+	init_philo_and_fork(config);
 	return (config);
 }

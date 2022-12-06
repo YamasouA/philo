@@ -2,9 +2,9 @@
 
 void	monitor(void *p)
 {
-	t_philo	*philo;
+	t_philo		*philo;
 	long long	now;
-	int		flag;
+	int			flag;
 
 	philo = (t_philo *)p;
 	flag = 0;
@@ -15,7 +15,7 @@ void	monitor(void *p)
 		if (philo->config->is_die)
 		{
 			pthread_mutex_unlock(&philo->config->monitor);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
 		pthread_mutex_lock(&philo->monitor_last);
@@ -23,9 +23,10 @@ void	monitor(void *p)
 		if (now == -1)
 		{
 			set_err(philo, "get_time error");
-			break;
+			pthread_mutex_unlock(&philo->monitor_last);
+			break ;
 		}
-		if (now - philo->last_eat > philo->config->die) // 餓死
+		if (now - philo->last_eat > philo->config->die)
 		{
 			philo->is_deth = true;
 			flag = DIE;
@@ -34,7 +35,7 @@ void	monitor(void *p)
 		if (flag != 0)
 		{
 			print_stamp(philo, flag);
-			break;
+			break ;
 		}
 	}
 }
