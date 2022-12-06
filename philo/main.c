@@ -5,8 +5,11 @@ int main(int argc, char **argv)
 {
 	t_config	*config;
 
-	if (!argcheck(argc))
+	if (!argcheck(argc, argv))
+	{
+		printf("arg is invalid\n");
 		return (1);
+	}
 	config = init(argc, argv);
 	if (config == NULL)
 		return (1);

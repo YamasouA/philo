@@ -11,7 +11,6 @@
 #define SLEEP 3
 #define THINK 4
 #define DIE	5
-#define FULL 6
 
 typedef struct s_config	t_config;
 typedef struct s_philo	t_philo;
@@ -37,29 +36,31 @@ struct s_philo
 {
 	int	id;
 	long long	last_eat;
-	// int	total_eat; // philo's eat total time
 	bool	is_deth;
 	pthread_t	thread;
 	pthread_mutex_t	monitor_last;
-	// pthread_mutex_t	monitor_total;
 	pthread_mutex_t	monitor_die;
 	t_config	*config;
 };
 
 // atoi.c
 int	ft_atoi(const char *str);
+bool	is_plus_number(const char *nbr);
 
 // arg_utils.c
 t_config	*init(int n, char **argv);
-bool	argcheck(int n);
+bool	argcheck(int n, char **argv);
 
 // simulate.c
-bool	start_simulation(t_config *config);
-long long	get_time();
+void	start_simulation(t_config *config);
+
+// monitor.c
+void	monitor(void *p);
 
 // utils.c
 long long	get_time();
 void	print_stamp(t_philo *philo, int type);
+void	set_err(t_philo *philo, char *msg);
 
 // action.c
 bool	eat(t_philo *philo);

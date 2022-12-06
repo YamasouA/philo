@@ -1,5 +1,13 @@
 #include "philo.h"
 
+void	set_err(t_philo *philo, char *msg)
+{
+	pthread_mutex_lock(&philo->config->monitor);
+	printf("%s\n", msg);
+	philo->config->is_die = true;
+	pthread_mutex_unlock(&philo->config->monitor);
+}
+
 long long	get_time()
 {
 	struct timeval	tv;
@@ -18,14 +26,12 @@ void	print_stamp(t_philo *philo, int type)
 	long long	now;
 	long long	diff;
 
-	// pthread_mutex_lock(&philo->config->monitor);
 	pthread_mutex_lock(&philo->config->print);
 	now = get_time();
 	if (now == -1)
 	{
 		// ERROR
 	}
-	// pthread_mutex_lock(&philo->monitor);
 	diff = now - philo->config->start;
 	if (!philo->config->is_die)
 	{
@@ -44,15 +50,6 @@ void	print_stamp(t_philo *philo, int type)
 			pthread_mutex_unlock(&philo->config->monitor);
 			printf("%lld %d died\n", diff, philo->id + 1);
 		}
-		else if (type == FULL)
-		{
-			pthread_mutex_lock(&philo->config->monitor);
-			philo->config->is_die = true;
-			pthread_mutex_unlock(&philo->config->monitor);
-			// printf("%lld %d ", diff, philo->id + 1);
-		}
 	}
 	pthread_mutex_unlock(&philo->config->print);
-	// pthread_mutex_unlock(&philo->config->monitor);
-	// pthread_mutex_unlock(&philo->monitor);
 }
