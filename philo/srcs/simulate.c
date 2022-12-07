@@ -20,10 +20,10 @@ static void	simulate(void *arg)
 		set_err(philo, "pthread_create error");
 		return ;
 	}
-	pthread_detach(th_monitor);
 	if (philo->id % 2 != 0)
 		usleep(500);
 	start_routine(philo);
+	pthread_join(th_monitor, NULL);
 }
 
 static size_t	create_thread(t_config *config)
