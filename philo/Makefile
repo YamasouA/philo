@@ -1,13 +1,18 @@
 CC = gcc
 NAME = philo
-SRCS = main.c \
+SRCS_DIR = srcs/
+SRCS_FILE = main.c \
 	simulate.c \
 	utils.c \
 	atoi.c \
-	action.c \
+	sleep.c \
+	eat.c \
 	arg_utils.c \
 	monitor.c \
-	init.c
+	init.c \
+	routine.c \
+	destroy.c
+SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS = $(SRCS:.c=.o)
 INCLUDE = -I includes
 CFLAGS = -Werror -Wextra -Wall

@@ -70,7 +70,7 @@ t_config	*init(int n, char **argv)
 		free(config);
 		return (NULL);
 	}
-	if (n == 5)
+	if (n == 6)
 		config->end_time = ft_atoi(argv[5]);
 	else
 		config->end_time = -1;
