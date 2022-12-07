@@ -75,5 +75,5 @@ void		_sleep(long long wait_time);
 void		do_sleep(t_philo *philo);
 
 // destroy.c
-void	mutex_destroy(t_config *config);
+void		mutex_destroy(t_config *config);
 #endif
