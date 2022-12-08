@@ -36,15 +36,14 @@ static void	fork_lock(t_philo *philo)
 	{
 		min = left;
 		max = right;
-	} else
+	}
+	else
 	{
 		min = right;
 		max = left;
 	}
-	//pthread_mutex_lock(&philo->config->forks[left]);
 	pthread_mutex_lock(&philo->config->forks[min]);
 	print_stamp(philo, FORK);
-	//pthread_mutex_lock(&philo->config->forks[right]);
 	pthread_mutex_lock(&philo->config->forks[max]);
 	print_stamp(philo, FORK);
 }
