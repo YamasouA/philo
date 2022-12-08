@@ -27,12 +27,25 @@ static void	fork_lock(t_philo *philo)
 {
 	int		right;
 	int		left;
+	int		min;
+	int		max;
 
 	left = philo->id;
 	right = (philo->id + philo->config->num - 1) % philo->config->num;
-	pthread_mutex_lock(&philo->config->forks[left]);
+	if (left < right)
+	{
+		min = left;
+		max = right;
+	} else
+	{
+		min = right;
+		max = left;
+	}
+	//pthread_mutex_lock(&philo->config->forks[left]);
+	pthread_mutex_lock(&philo->config->forks[min]);
 	print_stamp(philo, FORK);
-	pthread_mutex_lock(&philo->config->forks[right]);
+	//pthread_mutex_lock(&philo->config->forks[right]);
+	pthread_mutex_lock(&philo->config->forks[max]);
 	print_stamp(philo, FORK);
 }
 
