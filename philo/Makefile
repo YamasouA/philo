@@ -11,7 +11,8 @@ SRCS_FILE = main.c \
 	monitor.c \
 	init.c \
 	routine.c \
-	destroy.c
+	destroy.c \
+	think.c
 SRCS = $(addprefix $(SRCS_DIR), $(SRCS_FILE))
 OBJS = $(SRCS:.c=.o)
 INCLUDE = -I includes

@@ -6,13 +6,13 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:33:58 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/08 23:34:11 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/11 23:02:54 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	_sleep(long long wait_time)
+void	wait_time(long long wait_time)
 {
 	long long	end;
 	long long	now;
@@ -41,5 +41,5 @@ void	_sleep(long long wait_time)
 void	do_sleep(t_philo *philo)
 {
 	print_stamp(philo, SLEEP);
-	_sleep(philo->config->sleep);
+	wait_time(philo->config->sleep);
 }

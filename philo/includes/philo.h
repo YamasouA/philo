@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:35:06 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/08 23:35:09 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/11 23:04:17 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ struct s_config
 	int				end_time;
 	long long		start;
 	bool			is_die;
-	bool			err;
 	pthread_mutex_t	monitor;
 	pthread_mutex_t	print;
 
@@ -49,7 +48,7 @@ struct s_philo
 {
 	int				id;
 	long long		last_eat;
-	bool			is_deth;
+	bool			is_die;
 	pthread_t		thread;
 	pthread_mutex_t	monitor_last;
 	pthread_mutex_t	monitor_die;
@@ -83,8 +82,11 @@ void		set_err(t_philo *philo, char *msg);
 void		eat(t_philo *philo);
 
 // sleep.c
-void		_sleep(long long wait_time);
+void		wait_time(long long wait_time);
 void		do_sleep(t_philo *philo);
+
+// think.c
+void	do_think(t_philo *philo);
 
 // destroy.c
 void		mutex_destroy(t_config *config);

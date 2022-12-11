@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:33:28 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/08 23:34:19 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/11 23:03:08 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static void	eating(t_philo	*philo)
 	if (philo->last_eat == -1)
 		set_err(philo, "get_time error");
 	pthread_mutex_unlock(&philo->monitor_last);
-	_sleep(philo->config->eat);
+	wait_time(philo->config->eat);
 }
 
 void	eat(t_philo *philo)

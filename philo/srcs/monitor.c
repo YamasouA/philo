@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:33:43 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/08 23:34:15 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/10 23:47:39 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@ static bool	is_someone_die(t_philo *philo)
 		return (true);
 	}
 	pthread_mutex_unlock(&philo->config->monitor);
+	pthread_mutex_lock(&philo->monitor_die);
+	if (philo->is_die)
+	{
+		pthread_mutex_unlock(&philo->monitor_die);
+		return (true);
+	}
+	pthread_mutex_unlock(&philo->monitor_die);
 	return (false);
 }
 
@@ -41,7 +48,7 @@ void	monitor(void *p)
 			set_err(philo, "get_time error");
 		if (now - philo->last_eat > philo->config->die)
 		{
-			philo->is_deth = true;
+			philo->is_die = true;
 			pthread_mutex_unlock(&philo->monitor_last);
 			print_stamp(philo, DIE);
 			break ;
