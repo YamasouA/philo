@@ -86,7 +86,7 @@ void		wait_time(long long wait_time);
 void		do_sleep(t_philo *philo);
 
 // think.c
-void	do_think(t_philo *philo);
+void		do_think(t_philo *philo);
 
 // destroy.c
 void		mutex_destroy(t_config *config);
