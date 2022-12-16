@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/14 23:02:17 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/14 23:02:19 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/15 01:38:14 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 void	do_think(t_philo *philo)
 {
 	print_stamp(philo, THINK);
-	if (philo->config->num % 2 == 1)
+	if (philo->config->num % 2 != 0)
 		wait_time(50);
 }

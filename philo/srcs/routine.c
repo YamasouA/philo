@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:33:48 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/14 22:56:10 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/16 00:57:40 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,8 @@ void	start_routine(t_philo *philo)
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
 		do_sleep(philo);
+		do_think(philo);
+		/*
 		pthread_mutex_lock(&philo->config->monitor);
 		if (philo->config->is_die)
 		{
@@ -52,6 +54,6 @@ void	start_routine(t_philo *philo)
 			break ;
 		}
 		pthread_mutex_unlock(&philo->config->monitor);
-		do_think(philo);
+		*/
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: asouta <asouta@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/08 23:33:43 by asouta            #+#    #+#             */
-/*   Updated: 2022/12/10 23:47:39 by asouta           ###   ########.fr       */
+/*   Updated: 2022/12/15 23:51:16 by asouta           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	monitor(void *p)
 		now = get_time();
 		if (now == -1)
 			set_err(philo, "get_time error");
-		if (now - philo->last_eat > philo->config->die)
+		if (now - philo->last_eat >= philo->config->die)
 		{
 			philo->is_die = true;
 			pthread_mutex_unlock(&philo->monitor_last);
